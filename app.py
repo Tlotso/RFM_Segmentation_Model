@@ -105,3 +105,49 @@ st.download_button(
 )
 
 st.dataframe(churn_list.head(10)) # Show a preview of the top 10
+
+from sklearn.linear_model import LinearRegression
+import numpy as np
+
+st.divider()
+st.header("📈 Revenue Growth Forecast")
+st.write("This model uses Linear Regression to predict future monthly revenue based on historical trends.")
+
+# 1. Prepare Time-Series Data
+@st.cache_data
+def get_forecast_data(df):
+    # Aggregating revenue by month
+    df['Month'] = df['order_purchase_timestamp'].dt.to_period('M')
+    monthly_rev = df.groupby('Month')['payment_value'].sum().reset_index()
+    monthly_rev['Month_Index'] = np.arange(len(monthly_rev)) # 0, 1, 2... for the model
+    return monthly_rev
+
+monthly_data = get_forecast_data(df)
+
+# 2. Train the Linear Regression Model
+X = monthly_data[['Month_Index']] # Features (Time)
+y = monthly_data['payment_value']  # Target (Revenue)
+
+model = LinearRegression()
+model.fit(X, y)
+
+# 3. Predict the Next 3 Months
+future_months = np.array([len(monthly_data), len(monthly_data)+1, len(monthly_data)+2]).reshape(-1, 1)
+predictions = model.predict(future_months)
+
+# 4. Visualization
+fig_forecast, ax_f = plt.subplots(figsize=(10, 5))
+ax_f.plot(monthly_data['Month'].astype(str), y, label='Actual Revenue', marker='o', color='#1f77b4')
+
+ax_f.plot(['Next Month', 'In 2 Months', 'In 3 Months'], predictions, label='Forecast', linestyle='--', marker='s', color='#ff7f0e')
+
+ax_f.set_title("Historical Revenue vs. 3-Month Forecast")
+ax_f.set_ylabel("Revenue ($)")
+plt.xticks(rotation=45)
+ax_f.legend()
+st.pyplot(fig_forecast)
+
+# 5. Display Forecast Metrics
+col_f1, col_f2 = st.columns(2)
+col_f1.metric("Predicted Revenue (Next Month)", f"${predictions[0]:,.2f}")
+col_f2.metric("Growth Trend", "Upward" if model.coef_[0] > 0 else "Downward")
