@@ -8,4 +8,4 @@ This project analyzes customer behavior using RFM segmentation and predicts chur
 - Cohort Retention Analysis
 ## 🌐 Live Interactive Dashboard
 You can view the live, interactive version of this analysis here:
-[https://rfmsegmentationmodel-tlotso.streamlit.app/](https://rfmsegmentationmodel-tlotso.streamlit.app/)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://rfmsegmentationmodel-tlotso.streamlit.app/)
