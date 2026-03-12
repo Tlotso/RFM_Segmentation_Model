@@ -15,7 +15,7 @@ revenue at risk in the Olist e-commerce dataset.
 # 2. Load Data (Simplified for the app)
 @st.cache_data # This keeps the app fast!
 def load_data():
-    df = pd.read_csv('Brazilian E-Commerce Public Dataset by Olist.csv')
+    df = pd.read_csv('olist_sample.csv')
     return df
 
 df = load_data()
