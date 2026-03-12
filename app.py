@@ -76,3 +76,32 @@ fig_cohort, ax_cohort = plt.subplots(figsize=(12, 8))
 sns.heatmap(retention_matrix, annot=True, fmt='.1%', cmap='YlGnBu', vmin=0.0, vmax=0.05, ax=ax_cohort)
 ax_cohort.set_title("Retention Rates by Cohort")
 st.pyplot(fig_cohort)
+
+st.divider()
+st.header("🎯 Targeted Recovery List")
+st.write("Download the list of 'At Risk' and 'Lost' customers for marketing outreach.")
+
+# 1. Identify At-Risk Customers (180+ Days)
+snapshot_date = df['order_purchase_timestamp'].max() + dt.timedelta(days=1)
+rfm = df.groupby('customer_unique_id').agg({
+    'order_purchase_timestamp': lambda x: (snapshot_date - x.max()).days,
+    'order_id': 'count',
+    'payment_value': 'sum'
+})
+rfm.columns = ['Recency', 'Frequency', 'Monetary']
+
+# 2. Filter for Churned (180+ days)
+churn_list = rfm[rfm['Recency'] >= 180].sort_values('Monetary', ascending=False)
+
+# 3. Streamlit Download Button
+csv = churn_list.to_csv().encode('utf-8')
+
+st.download_button(
+    label="📥 Download Churn Recovery List (CSV)",
+    data=csv,
+    file_name='at_risk_customers.csv',
+    mime='text/csv',
+    help="Click to export customers who haven't purchased in over 180 days."
+)
+
+st.dataframe(churn_list.head(10)) # Show a preview of the top 10
