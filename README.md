@@ -6,3 +6,5 @@ This project analyzes customer behavior using RFM segmentation and predicts chur
 - Revenue Concentration Analysis
 - Geographical Churn Mapping
 - Cohort Retention Analysis
+## 🌐 Live Dashboard
+Check out the interactive version of this analysis here: [rfmsegmentationmodel-qtdwbujxgckbutrmmm8f4x]
